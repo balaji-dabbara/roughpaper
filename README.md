@@ -1,5 +1,8 @@
 # Rough Paper ✏️
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
 A minimal, browser-based freehand drawing canvas — like a digital rough paper or notepad you can scribble on.
 
 ## Features
@@ -67,3 +70,11 @@ php -S localhost:8080
 ```
 
 Then open the printed URL in your browser.
+
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## License
+
+[MIT](LICENSE) © 2026 Balaji Dabbara
