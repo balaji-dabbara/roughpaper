@@ -1,11 +1,16 @@
-import { currentColor, currentSize } from './state.js';
+import { currentColor, currentSize, currentBgColor } from './state.js';
 
 export const canvas = document.getElementById('canvas');
 export const ctx = canvas.getContext('2d');
 
-export function fillWhite() {
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+// Sets the CSS background colour of the canvas element (keeps canvas context transparent)
+export function fillBackground() {
+  canvas.style.backgroundColor = currentBgColor;
+}
+
+// Clears all strokes from the canvas context (CSS bg remains visible)
+export function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 export function applyPenStyle() {
@@ -16,11 +21,12 @@ export function applyPenStyle() {
 }
 
 export function resizeCanvas() {
-  // Snapshot the current pixels before resize wipes the canvas
+  // Snapshot strokes before resize clears the canvas
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  fillWhite();
+  const area = canvas.parentElement;
+  canvas.width  = area.clientWidth;
+  canvas.height = area.clientHeight;
+  // CSS background-color covers the canvas element - no fill needed in context
   ctx.putImageData(imageData, 0, 0);
   applyPenStyle();
 }

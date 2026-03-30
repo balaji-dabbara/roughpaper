@@ -1,15 +1,50 @@
-import { setColor, setSize } from './state.js';
-import { fillWhite, applyPenStyle } from './canvas.js';
-import { STORAGE_KEY } from './storage.js';
+import { setColor, setSize, setBgColor, currentColor, currentBgColor } from './state.js';
+import { canvas, fillBackground, clearCanvas, applyPenStyle } from './canvas.js';
+import { STORAGE_KEY, saveBgColor, saveToStorage } from './storage.js';
 
 export function registerToolbarEvents() {
-  // Color swatches
-  document.querySelectorAll('.swatch').forEach((swatch) => {
+  const colorBtn   = document.getElementById('color-btn');
+  const colorDot   = document.getElementById('color-btn-dot');
+  const colorPanel = document.getElementById('color-panel');
+
+  // Initialise dot and active states from current state
+  colorDot.style.background = currentColor;
+  document.querySelectorAll('.pen-swatch').forEach((s) => {
+    if (s.dataset.color === currentColor) s.classList.add('active');
+  });
+  document.querySelectorAll('.bg-chip').forEach((c) => {
+    if (c.dataset.color === currentBgColor) c.classList.add('active');
+  });
+
+  // Toggle colour panel below the button
+  colorBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const rect = colorBtn.getBoundingClientRect();
+    colorPanel.style.top  = `${rect.bottom + 10}px`;
+    colorPanel.style.left = `${rect.left + rect.width / 2}px`;
+    colorPanel.classList.toggle('open');
+  });
+
+  // Pen swatches — apply immediately
+  document.querySelectorAll('.pen-swatch').forEach((swatch) => {
     swatch.addEventListener('click', () => {
-      document.querySelectorAll('.swatch').forEach((s) => s.classList.remove('active'));
+      document.querySelectorAll('.pen-swatch').forEach((s) => s.classList.remove('active'));
       swatch.classList.add('active');
       setColor(swatch.dataset.color);
+      colorDot.style.background = swatch.dataset.color;
       applyPenStyle();
+    });
+  });
+
+  // Background chips — apply immediately
+  document.querySelectorAll('.bg-chip').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.bg-chip').forEach((c) => c.classList.remove('active'));
+      chip.classList.add('active');
+      setBgColor(chip.dataset.color);
+      fillBackground();
+      saveBgColor(chip.dataset.color);
+      saveToStorage();
     });
   });
 
@@ -25,8 +60,30 @@ export function registerToolbarEvents() {
 
   // Clear button
   document.getElementById('clear-btn').addEventListener('click', () => {
-    fillWhite();
+    clearCanvas();
     applyPenStyle();
     localStorage.removeItem(STORAGE_KEY);
+  });
+
+  // Export button — composite CSS bg + canvas strokes into a single image
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tCtx = tempCanvas.getContext('2d');
+    tCtx.fillStyle = currentBgColor;
+    tCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    tCtx.drawImage(canvas, 0, 0);
+    const link = document.createElement('a');
+    link.download = `roughpaper-${Date.now()}.png`;
+    link.href = tempCanvas.toDataURL('image/png');
+    link.click();
+  });
+
+  // Close panel on outside click
+  document.addEventListener('click', (e) => {
+    if (!colorPanel.contains(e.target) && e.target !== colorBtn) {
+      colorPanel.classList.remove('open');
+    }
   });
 }
