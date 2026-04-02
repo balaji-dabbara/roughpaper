@@ -1,9 +1,11 @@
 import { canvas, ctx } from './canvas.js';
 import {
   currentColor, currentSize,
-  isDrawing, lastX, lastY,
+  isDrawing, isErasing,
+  lastX, lastY,
   setIsDrawing, setLastPos,
 } from './state.js';
+import { applyPenStyle, applyEraserStyle } from './canvas.js';
 import { saveToStorage } from './storage.js';
 
 function getPos(e) {
@@ -24,10 +26,14 @@ function startDraw(e) {
   setIsDrawing(true);
   const { x, y } = getPos(e);
   setLastPos(x, y);
+  if (isErasing) {
+    applyEraserStyle();
+  } else {
+    applyPenStyle();
+  }
   // Paint a dot for a single click/tap with no drag
   ctx.beginPath();
-  ctx.arc(x, y, currentSize / 2, 0, Math.PI * 2);
-  ctx.fillStyle = currentColor;
+  ctx.arc(x, y, isErasing ? currentSize * 2 : currentSize / 2, 0, Math.PI * 2);
   ctx.fill();
 }
 

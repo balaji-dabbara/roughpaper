@@ -14,8 +14,19 @@ export function clearCanvas() {
 }
 
 export function applyPenStyle() {
+  ctx.globalCompositeOperation = 'source-over';
   ctx.strokeStyle = currentColor;
+  ctx.fillStyle   = currentColor;
   ctx.lineWidth = currentSize;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+}
+
+export function applyEraserStyle() {
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.strokeStyle = 'rgba(0,0,0,1)';
+  ctx.fillStyle   = 'rgba(0,0,0,1)';
+  ctx.lineWidth = currentSize * 4;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 }

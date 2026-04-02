@@ -26,5 +26,5 @@ export function saveBgColor(color) {
 }
 
 export function loadBgColor() {
-  return localStorage.getItem(BG_KEY) || '#ffffff';
+  return localStorage.getItem(BG_KEY) || '#1a1a1a';
 }

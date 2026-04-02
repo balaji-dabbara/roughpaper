@@ -1,5 +1,5 @@
-import { setColor, setSize, setBgColor, currentColor, currentBgColor } from './state.js';
-import { canvas, fillBackground, clearCanvas, applyPenStyle } from './canvas.js';
+import { setColor, setSize, setBgColor, setIsErasing, currentColor, currentBgColor } from './state.js';
+import { canvas, fillBackground, clearCanvas, applyPenStyle, applyEraserStyle } from './canvas.js';
 import { STORAGE_KEY, saveBgColor, saveToStorage } from './storage.js';
 
 export function registerToolbarEvents() {
@@ -25,13 +25,15 @@ export function registerToolbarEvents() {
     colorPanel.classList.toggle('open');
   });
 
-  // Pen swatches — apply immediately
+  // Pen swatches — apply immediately, also deactivate eraser
   document.querySelectorAll('.pen-swatch').forEach((swatch) => {
     swatch.addEventListener('click', () => {
       document.querySelectorAll('.pen-swatch').forEach((s) => s.classList.remove('active'));
       swatch.classList.add('active');
       setColor(swatch.dataset.color);
       colorDot.style.background = swatch.dataset.color;
+      setIsErasing(false);
+      document.getElementById('eraser-btn').classList.remove('active');
       applyPenStyle();
     });
   });
@@ -56,6 +58,18 @@ export function registerToolbarEvents() {
       setSize(parseInt(btn.dataset.size, 10));
       applyPenStyle();
     });
+  });
+
+  // Eraser button
+  const eraserBtn = document.getElementById('eraser-btn');
+  eraserBtn.addEventListener('click', () => {
+    const erasing = eraserBtn.classList.toggle('active');
+    setIsErasing(erasing);
+    if (erasing) {
+      applyEraserStyle();
+    } else {
+      applyPenStyle();
+    }
   });
 
   // Clear button
