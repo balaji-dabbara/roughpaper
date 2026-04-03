@@ -1,19 +1,17 @@
-import { canvas, fillBackground, applyPenStyle, resizeCanvas } from './canvas.js';
-import { loadFromStorage, loadBgColor } from './storage.js';
-import { setBgColor } from './state.js';
+import { canvas, applyPenStyle, resizeCanvas } from './canvas.js';
+import { initPages, loadActivePage } from './pages.js';
 import { registerDrawingEvents } from './drawing.js';
 import { registerToolbarEvents } from './toolbar.js';
+import { renderSidebar } from './tabs.js';
 
-const canvasArea = document.getElementById('canvas-area');
+const canvasArea  = document.getElementById('canvas-area');
 canvas.width  = canvasArea.clientWidth;
 canvas.height = canvasArea.clientHeight;
 
-const savedBg = loadBgColor();
-setBgColor(savedBg);
-
-fillBackground();
+initPages();
+renderSidebar();
+loadActivePage();
 applyPenStyle();
-loadFromStorage();
 
 registerDrawingEvents();
 registerToolbarEvents();

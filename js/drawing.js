@@ -1,12 +1,12 @@
 import { canvas, ctx } from './canvas.js';
 import {
-  currentColor, currentSize,
+  currentSize,
   isDrawing, isErasing,
   lastX, lastY,
   setIsDrawing, setLastPos,
 } from './state.js';
 import { applyPenStyle, applyEraserStyle } from './canvas.js';
-import { saveToStorage } from './storage.js';
+import { saveCurrentPageData } from './pages.js';
 
 function getPos(e) {
   const rect = canvas.getBoundingClientRect();
@@ -51,7 +51,7 @@ function draw(e) {
 function endDraw() {
   if (!isDrawing) return;
   setIsDrawing(false);
-  saveToStorage();
+  saveCurrentPageData();
 }
 
 export function registerDrawingEvents() {

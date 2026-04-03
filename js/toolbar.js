@@ -1,6 +1,6 @@
 import { setColor, setSize, setBgColor, setIsErasing, currentColor, currentBgColor } from './state.js';
 import { canvas, fillBackground, clearCanvas, applyPenStyle, applyEraserStyle } from './canvas.js';
-import { STORAGE_KEY, saveBgColor, saveToStorage } from './storage.js';
+import { saveCurrentPageData } from './pages.js';
 
 export function registerToolbarEvents() {
   const colorBtn   = document.getElementById('color-btn');
@@ -45,8 +45,7 @@ export function registerToolbarEvents() {
       chip.classList.add('active');
       setBgColor(chip.dataset.color);
       fillBackground();
-      saveBgColor(chip.dataset.color);
-      saveToStorage();
+      saveCurrentPageData();
     });
   });
 
@@ -76,7 +75,7 @@ export function registerToolbarEvents() {
   document.getElementById('clear-btn').addEventListener('click', () => {
     clearCanvas();
     applyPenStyle();
-    localStorage.removeItem(STORAGE_KEY);
+    saveCurrentPageData();
   });
 
   // Export button — composite CSS bg + canvas strokes into a single image
@@ -94,10 +93,28 @@ export function registerToolbarEvents() {
     link.click();
   });
 
+  // About panel toggle
+  const aboutBtn   = document.getElementById('about-btn');
+  const aboutPanel = document.getElementById('about-panel');
+  const aboutClose = document.getElementById('about-close');
+
+  aboutBtn.addEventListener('click', () => aboutPanel.classList.add('open'));
+  aboutClose.addEventListener('click', () => aboutPanel.classList.remove('open'));
+  aboutPanel.addEventListener('click', (e) => {
+    if (e.target === aboutPanel) aboutPanel.classList.remove('open');
+  });
+
   // Close panel on outside click
   document.addEventListener('click', (e) => {
     if (!colorPanel.contains(e.target) && e.target !== colorBtn) {
       colorPanel.classList.remove('open');
     }
+  });
+
+  // Sync bg-chip active state when page switches
+  document.addEventListener('pageloaded', ({ detail: { page } }) => {
+    document.querySelectorAll('.bg-chip').forEach((c) => {
+      c.classList.toggle('active', c.dataset.color === page.bgColor);
+    });
   });
 }

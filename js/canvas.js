@@ -4,8 +4,8 @@ export const canvas = document.getElementById('canvas');
 export const ctx = canvas.getContext('2d');
 
 // Sets the CSS background colour of the canvas element (keeps canvas context transparent)
-export function fillBackground() {
-  canvas.style.backgroundColor = currentBgColor;
+export function fillBackground(color) {
+  canvas.style.backgroundColor = color ?? currentBgColor;
 }
 
 // Clears all strokes from the canvas context (CSS bg remains visible)
