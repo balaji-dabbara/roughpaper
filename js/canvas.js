@@ -3,9 +3,11 @@ import { currentColor, currentSize, currentBgColor } from './state.js';
 export const canvas = document.getElementById('canvas');
 export const ctx = canvas.getContext('2d');
 
+export const CANVAS_WIDTH = 5000;
+
 // Sets the CSS background colour of the canvas element (keeps canvas context transparent)
-export function fillBackground() {
-  canvas.style.backgroundColor = currentBgColor;
+export function fillBackground(color) {
+  canvas.style.backgroundColor = color ?? currentBgColor;
 }
 
 // Clears all strokes from the canvas context (CSS bg remains visible)
@@ -35,9 +37,8 @@ export function resizeCanvas() {
   // Snapshot strokes before resize clears the canvas
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const area = canvas.parentElement;
-  canvas.width  = area.clientWidth;
+  // Preserve the wide canvas width — only update height
   canvas.height = area.clientHeight;
-  // CSS background-color covers the canvas element - no fill needed in context
   ctx.putImageData(imageData, 0, 0);
   applyPenStyle();
 }

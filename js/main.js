@@ -1,19 +1,20 @@
-import { canvas, fillBackground, applyPenStyle, resizeCanvas } from './canvas.js';
-import { loadFromStorage, loadBgColor } from './storage.js';
-import { setBgColor } from './state.js';
+import { canvas, applyPenStyle, resizeCanvas, CANVAS_WIDTH } from './canvas.js';
+import { initPages, loadActivePage } from './pages.js';
 import { registerDrawingEvents } from './drawing.js';
 import { registerToolbarEvents } from './toolbar.js';
+import { renderSidebar, initSidebarToggle } from './tabs.js';
 
-const canvasArea = document.getElementById('canvas-area');
-canvas.width  = canvasArea.clientWidth;
+// Apply sidebar collapsed state before sizing canvas so clientWidth is accurate
+initSidebarToggle();
+
+const canvasArea  = document.getElementById('canvas-area');
+canvas.width  = CANVAS_WIDTH;
 canvas.height = canvasArea.clientHeight;
 
-const savedBg = loadBgColor();
-setBgColor(savedBg);
-
-fillBackground();
+initPages();
+renderSidebar();
+loadActivePage();
 applyPenStyle();
-loadFromStorage();
 
 registerDrawingEvents();
 registerToolbarEvents();

@@ -1,12 +1,12 @@
 import { canvas, ctx } from './canvas.js';
 import {
-  currentColor, currentSize,
-  isDrawing, isErasing,
+  currentSize,
+  isDrawing, isErasing, isPanning,
   lastX, lastY,
   setIsDrawing, setLastPos,
 } from './state.js';
 import { applyPenStyle, applyEraserStyle } from './canvas.js';
-import { saveToStorage } from './storage.js';
+import { saveCurrentPageData } from './pages.js';
 
 function getPos(e) {
   const rect = canvas.getBoundingClientRect();
@@ -22,8 +22,19 @@ function getPos(e) {
   };
 }
 
+function getRawPos(e) {
+  if (e.touches) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  return { x: e.clientX, y: e.clientY };
+}
+
 function startDraw(e) {
   setIsDrawing(true);
+  if (isPanning) {
+    const { x, y } = getRawPos(e);
+    setLastPos(x, y);
+    canvas.style.cursor = 'grabbing';
+    return;
+  }
   const { x, y } = getPos(e);
   setLastPos(x, y);
   if (isErasing) {
@@ -40,6 +51,12 @@ function startDraw(e) {
 function draw(e) {
   if (!isDrawing) return;
   e.preventDefault();
+  if (isPanning) {
+    const { x, y } = getRawPos(e);
+    canvas.parentElement.scrollLeft += lastX - x;
+    setLastPos(x, y);
+    return;
+  }
   const { x, y } = getPos(e);
   ctx.beginPath();
   ctx.moveTo(lastX, lastY);
@@ -51,7 +68,11 @@ function draw(e) {
 function endDraw() {
   if (!isDrawing) return;
   setIsDrawing(false);
-  saveToStorage();
+  if (isPanning) {
+    canvas.style.cursor = 'grab';
+    return;
+  }
+  saveCurrentPageData();
 }
 
 export function registerDrawingEvents() {
