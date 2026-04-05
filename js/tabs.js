@@ -5,6 +5,26 @@ import {
 } from './pages.js';
 
 const sidebar = document.getElementById('page-sidebar');
+const toggleBtn = document.getElementById('sidebar-toggle');
+
+const COLLAPSED_KEY = 'roughpaper-sidebar-collapsed';
+
+export function initSidebarToggle() {
+  if (localStorage.getItem(COLLAPSED_KEY) === 'true') {
+    document.body.classList.add('sidebar-collapsed');
+  }
+
+  const canvasArea = document.getElementById('canvas-area');
+
+  toggleBtn.addEventListener('click', () => {
+    const collapsed = document.body.classList.toggle('sidebar-collapsed');
+    localStorage.setItem(COLLAPSED_KEY, String(collapsed));
+    // Wait for the CSS transition to finish before resizing the canvas
+    canvasArea.addEventListener('transitionend', () => {
+      window.dispatchEvent(new Event('resize'));
+    }, { once: true });
+  });
+}
 
 function startRename(page, labelEl) {
   const input = document.createElement('input');

@@ -1,11 +1,14 @@
-import { canvas, applyPenStyle, resizeCanvas } from './canvas.js';
+import { canvas, applyPenStyle, resizeCanvas, CANVAS_WIDTH } from './canvas.js';
 import { initPages, loadActivePage } from './pages.js';
 import { registerDrawingEvents } from './drawing.js';
 import { registerToolbarEvents } from './toolbar.js';
-import { renderSidebar } from './tabs.js';
+import { renderSidebar, initSidebarToggle } from './tabs.js';
+
+// Apply sidebar collapsed state before sizing canvas so clientWidth is accurate
+initSidebarToggle();
 
 const canvasArea  = document.getElementById('canvas-area');
-canvas.width  = canvasArea.clientWidth;
+canvas.width  = CANVAS_WIDTH;
 canvas.height = canvasArea.clientHeight;
 
 initPages();
