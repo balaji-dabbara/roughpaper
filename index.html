@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ffffff" />
   <title>Rough Paper</title>
+  <link rel="manifest" href="pwa/manifest.json" />
   <link rel="icon" href="icon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -217,6 +220,20 @@
 
   <div id="canvas-area">
     <canvas id="canvas"></canvas>
+  </div>
+
+  <!-- Install prompt modal -->
+  <div id="install-modal" class="install-modal" hidden>
+    <div class="install-card" role="dialog" aria-modal="true" aria-label="Install Rough Paper">
+      <button id="install-close" class="install-close" aria-label="Close">&times;</button>
+      <img src="assets/icons/icon-192.png" alt="Rough Paper" width="64" height="64" />
+      <h3>Install Rough Paper</h3>
+      <p>Add Rough Paper to your device for quicker access and offline use.</p>
+      <div class="install-actions">
+        <button id="install-btn" class="btn-primary">Install</button>
+        <button id="dismiss-btn" class="btn-secondary">Maybe later</button>
+      </div>
+    </div>
   </div>
 
   <script type="module" src="js/main.js"></script>
