@@ -1,3 +1,4 @@
+import './pwa.js';
 import { canvas, applyPenStyle, resizeCanvas, CANVAS_WIDTH } from './canvas.js';
 import { initPages, loadActivePage } from './pages.js';
 import { registerDrawingEvents } from './drawing.js';

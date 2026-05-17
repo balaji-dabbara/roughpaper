@@ -10,71 +10,68 @@ A minimal, browser-based freehand drawing canvas — like a digital rough paper 
 
 ## Features
 
-- 🖊️ **Freehand drawing** — smooth pen strokes with touch & mouse support
-- 🎨 **10 pen colour swatches** — black, white, red, orange, yellow, green, teal, blue, purple, pink
-- 🖼️ **8 background colours** — white, cream, warm paper, sand, sky, pale yellow, gray, black
-- ✏️ **3 brush sizes** — thin, medium, thick
-- 🧹 **Eraser tool** — wipe strokes without clearing the whole canvas
-- 📄 **Multi-page support** — up to 10 pages per session, each with independent canvas & background
-- 🏷️ **Rename pages** — double-click any page label in the sidebar to rename it
-- 💾 **Auto-save to localStorage** — all pages persist across page refreshes
-- 📤 **Export as PNG** — download the current page as a PNG image
-- 🗑️ **Clear button** — wipe the current page clean
-- 📱 **Mobile friendly** — responsive layout with horizontal page strip on small screens
+- 🖊️ Freehand drawing (mouse + touch)
+- 🎨 10 pen colours and 3 brush sizes
+- 🧹 Eraser, clear, export-as-PNG
+- 📄 Multi-page support with auto-save to localStorage
+- 📱 Mobile-first responsive UI
+- ✅ Installable PWA with offline support (service worker + manifest)
 
-## Project structure
+## Project structure (high level)
 
 ```
 roughpaper/
 ├── index.html
 ├── style.css
-├── icon.png
-└── js/
-    ├── main.js       ← entry point
-    ├── state.js      ← shared drawing state
-    ├── canvas.js     ← canvas setup, resize & pen/eraser styles
-    ├── storage.js    ← localStorage helpers
-    ├── drawing.js    ← draw/erase logic & input events
-    ├── toolbar.js    ← colour, size, eraser & clear controls
-    ├── pages.js      ← multi-page state & per-page persistence
-    └── tabs.js       ← page sidebar UI rendering
+├── assets/
+│   └── icons/
+│       ├── icon.png
+│       ├── icon-192.png
+│       └── icon-512.png
+├── js/
+│   ├── main.js       ← entry point
+│   ├── pwa.js        ← service worker register & install modal
+│   ├── canvas.js     ← canvas setup, resize & pen/eraser styles
+│   ├── drawing.js    ← draw/erase logic & input events
+│   ├── toolbar.js    ← colour, size, eraser & clear controls
+│   ├── pages.js      ← multi-page state & per-page persistence
+│   ├── storage.js    ← localStorage helpers
+│   └── tabs.js       ← page sidebar UI rendering
+└── pwa/
+    ├── manifest.json
+    └── sw.js         ← service worker (caching/offline)
 ```
 
-## Running locally
+## PWA & icons
 
-The app is purely client-side — no build step, no package manager, no dependencies.
+- Manifest: `pwa/manifest.json`
+- Service worker: `pwa/sw.js` (registered from `js/pwa.js`)
+- Icons: `assets/icons/icon-192.png`, `assets/icons/icon-512.png` (used in manifest and apple-touch-icon)
 
-### Option 1 — VS Code Live Server (recommended)
+Notes:
+- Service worker enables offline caching and faster loads.
+- Install prompt: a custom modal is shown using the `beforeinstallprompt` event; users can install via that modal or the browser UI.
 
-1. Install the **Live Server** extension in VS Code.
-2. Right-click `index.html` → **Open with Live Server**.
-3. The app opens at `http://127.0.0.1:5500`.
+## Running & testing PWA locally
 
-### Option 2 — Any local HTTP server
+Service workers and the install flow require HTTPS OR `localhost`. Recommended steps:
 
-**Node.js** (`npx`, no install needed):
-```bash
-npx serve .
-# → http://localhost:3000
-```
+1. Serve the repo with a local server (Live Server, `python -m http.server`, or `npx serve`).
+2. Open DevTools → Application:
+   - Manifest: verify icons and display: standalone
+   - Service Workers: confirm `/pwa/sw.js` is registered and active
+3. To test offline: enable "Offline" in DevTools → Network and reload — app should still load from cache.
+4. To test install flow: either accept the browser install prompt or click the app's install button (modal will appear when `beforeinstallprompt` fires).
 
-**Python 3:**
-```bash
-python -m http.server 8080
-# → http://localhost:8080
-```
+## Developer notes
 
-**PHP:**
-```bash
-php -S localhost:8080
-# → http://localhost:8080
-```
-
-> ⚠️ Opening `index.html` directly via `file://` may block ES module imports in some browsers. Use a local server if the canvas doesn't load.
+- This repo is primarily client-side; Node is not required to run the app in the browser.
+- A small Node helper used for icon resizing was removed. To regenerate icons programmatically later, add a script and reinstall dependencies.
+- Whenever you update assets referenced by the service worker, increment `CACHE_NAME` in `pwa/sw.js` so clients refresh their cache.
 
 ## Contributing
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
