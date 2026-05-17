@@ -1,7 +1,7 @@
 import { currentColor, currentSize, currentBgColor } from './state.js';
 
 export const canvas = document.getElementById('canvas');
-export const ctx = canvas.getContext('2d');
+export const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
 export const CANVAS_WIDTH = 5000;
 
