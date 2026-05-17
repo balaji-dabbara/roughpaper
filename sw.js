@@ -1,4 +1,4 @@
-const CACHE_NAME = 'roughpaper-v3';
+const CACHE_NAME = 'roughpaper-v4';
 const ASSETS = [
   '/',
   '/index.html',
