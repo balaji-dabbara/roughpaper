@@ -1,0 +1,19 @@
+title: Rough Paper
+description: >-
+  A free, minimal freehand drawing canvas that runs entirely in your browser.
+  Sketch, doodle, and draw with no sign-up required. Multi-page, offline-ready
+  PWA with export to PNG.
+url: "https://www.roughpaper.online"
+baseurl: ""
+lang: en
+
+exclude:
+  - README.md
+  - CONTRIBUTING.md
+  - CODE_OF_CONDUCT.md
+  - LICENSE
+  - generate-og.html
+  - SEO-SUBMISSION.md
+  - memory/
+  - "*.sh"
+  - node_modules/

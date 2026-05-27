@@ -4,13 +4,85 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#ffffff" />
-  <title>Rough Paper</title>
+
+  <!-- Primary SEO -->
+  <title>Rough Paper — Free Freehand Drawing Canvas Online</title>
+  <meta name="description" content="Rough Paper is a free, minimal freehand drawing canvas that runs entirely in your browser. Sketch, doodle, and draw with no sign-up required. Multi-page, offline-ready PWA with export to PNG." />
+  <meta name="author" content="Balaji Dabbara" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://www.roughpaper.online/" />
+
+  <!-- Open Graph (Facebook / LinkedIn / WhatsApp previews) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Rough Paper" />
+  <meta property="og:title" content="Rough Paper — Free Freehand Drawing Canvas Online" />
+  <meta property="og:description" content="A free, distraction-free drawing canvas in your browser. Sketch and doodle with no sign-up. Offline-ready PWA with multi-page support and PNG export." />
+  <meta property="og:url" content="https://www.roughpaper.online/" />
+  <meta property="og:image" content="https://www.roughpaper.online/assets/og-image.png" />
+  <meta property="og:image:alt" content="Rough Paper — freehand drawing canvas" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Rough Paper — Free Freehand Drawing Canvas Online" />
+  <meta name="twitter:description" content="A free, distraction-free drawing canvas in your browser. Sketch and doodle with no sign-up. Offline-ready PWA with multi-page support and PNG export." />
+  <meta name="twitter:image" content="https://www.roughpaper.online/assets/og-image.png" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Rough Paper",
+    "url": "https://www.roughpaper.online/",
+    "description": "A free, minimal freehand drawing canvas that runs entirely in your browser. Sketch, doodle, and draw with no sign-up required. Multi-page, offline-ready PWA with export to PNG.",
+    "applicationCategory": "DesignApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires a modern web browser with HTML5 Canvas support",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Freehand drawing with mouse and touch",
+      "10 pen colours and 4 brush sizes",
+      "Eraser tool",
+      "Multi-page canvas with auto-save",
+      "Export drawings as PNG",
+      "Offline support via service worker",
+      "Installable PWA",
+      "Mobile-friendly responsive UI"
+    ],
+    "author": {
+      "@type": "Person",
+      "name": "Balaji Dabbara"
+    },
+    "isAccessibleForFree": true,
+    "inLanguage": "en"
+  }
+  </script>
+
+  <link rel="preload" href="style.css" as="style" />
   <link rel="manifest" href="pwa/manifest.json" />
   <link rel="icon" href="assets/icons/icon.png" type="image/png" />
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <h1 class="visually-hidden">Rough Paper — Free Freehand Drawing Canvas Online</h1>
+
+  <noscript>
+    <div style="font-family:sans-serif;padding:3rem;text-align:center;max-width:500px;margin:auto">
+      <img src="assets/icons/icon-192.png" alt="Rough Paper" width="80" height="80" style="margin-bottom:1rem" />
+      <h2>Rough Paper</h2>
+      <p style="margin-top:0.75rem;color:#555;line-height:1.6">
+        Rough Paper is a free freehand drawing canvas that runs entirely in your browser.
+        Please enable JavaScript to sketch, doodle, and draw — no sign-up needed.
+      </p>
+    </div>
+  </noscript>
+
   <header id="topbar">
     <div id="brand">
       <img id="brand-icon" src="assets/icons/icon.png" alt="Rough Paper" width="32" height="32" />
