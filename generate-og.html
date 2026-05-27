@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generate OG Image — Rough Paper</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 1.25rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    canvas { border-radius: 10px; max-width: 90vw; box-shadow: 0 8px 40px rgba(0,0,0,0.6); }
+    button {
+      padding: 0.75rem 2rem;
+      background: linear-gradient(135deg, #4361ee, #7209b7);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+    }
+    button:hover { opacity: 0.9; }
+    p { color: #888; font-size: 0.85rem; margin: 0; }
+    code { color: #aaa; background: #222; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <canvas id="c" width="1200" height="630"></canvas>
+  <button onclick="download()">Download og-image.png</button>
+  <p>Save the downloaded file to <code>assets/og-image.png</code> then commit.</p>
+
+  <script>
+    const c = document.getElementById('c');
+    const ctx = c.getContext('2d');
+    const W = 1200, H = 630;
+
+    // Background gradient
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#3451d1');
+    bg.addColorStop(0.5, '#4361ee');
+    bg.addColorStop(1, '#7209b7');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle noise texture overlay via repeating tiny dots
+    ctx.globalAlpha = 0.04;
+    for (let x = 0; x < W; x += 4) {
+      for (let y = 0; y < H; y += 4) {
+        if (Math.random() > 0.5) {
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(x, y, 1, 1);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Large decorative circle — top right
+    ctx.globalAlpha = 0.07;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(1100, 0, 340, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Large decorative circle — bottom left
+    ctx.beginPath();
+    ctx.arc(80, H, 260, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Decorative freehand strokes (top-right quadrant)
+    function squiggle(points, alpha, width) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(points[0][0], points[0][1]);
+      for (let i = 1; i < points.length - 1; i++) {
+        const mx = (points[i][0] + points[i+1][0]) / 2;
+        const my = (points[i][1] + points[i+1][1]) / 2;
+        ctx.quadraticCurveTo(points[i][0], points[i][1], mx, my);
+      }
+      ctx.lineTo(points[points.length-1][0], points[points.length-1][1]);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    squiggle([[820,80],[870,130],[830,180],[890,230],[850,280],[910,320],[870,370]], 0.18, 10);
+    squiggle([[940,40],[990,100],[950,160],[1010,210],[970,270],[1030,310]], 0.13, 7);
+    squiggle([[1060,120],[1090,180],[1050,240],[1100,290],[1060,350]], 0.10, 5);
+    squiggle([[780,200],[820,260],[790,310],[840,360],[800,420]], 0.08, 4);
+
+    // Pencil icon (top-left, above title)
+    function drawPencilIcon(x, y, size, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(x, y);
+      ctx.fillStyle = '#fff';
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = size * 0.06;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      const s = size;
+      // Pencil body (parallelogram)
+      ctx.beginPath();
+      ctx.moveTo(0.15*s, 0);
+      ctx.lineTo(s, 0.85*s);
+      ctx.lineTo(0.85*s, s);
+      ctx.lineTo(0, 0.15*s);
+      ctx.closePath();
+      ctx.globalAlpha = alpha * 0.9;
+      ctx.fill();
+
+      // Tip triangle
+      ctx.beginPath();
+      ctx.moveTo(s, 0.85*s);
+      ctx.lineTo(0.85*s, s);
+      ctx.lineTo(s*1.02, s*1.02);
+      ctx.closePath();
+      ctx.globalAlpha = alpha * 0.6;
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    drawPencilIcon(96, 118, 64, 0.85);
+
+    // App name
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `bold 96px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif`;
+    ctx.fillText('Rough Paper', 100, 320);
+
+    // Tagline
+    ctx.font = `400 38px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.82)';
+    ctx.fillText('Free freehand drawing canvas — no sign-up needed', 102, 388);
+
+    // Feature pills
+    const features = ['Multi-page', 'Offline PWA', 'Export PNG', 'Touch & mobile'];
+    let px = 102;
+    const py = 440;
+    ctx.font = `500 23px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+    for (const f of features) {
+      const tw = ctx.measureText(f).width;
+      const pw = tw + 36, ph = 44, pr = 22;
+      // Pill background
+      ctx.fillStyle = 'rgba(255,255,255,0.14)';
+      ctx.beginPath();
+      ctx.moveTo(px + pr, py);
+      ctx.lineTo(px + pw - pr, py);
+      ctx.arc(px + pw - pr, py + pr, pr, -Math.PI/2, Math.PI/2);
+      ctx.lineTo(px + pr, py + ph);
+      ctx.arc(px + pr, py + pr, pr, Math.PI/2, -Math.PI/2);
+      ctx.closePath();
+      ctx.fill();
+      // Pill text
+      ctx.fillStyle = 'rgba(255,255,255,0.88)';
+      ctx.fillText(f, px + 18, py + 30);
+      px += pw + 14;
+    }
+
+    // URL
+    ctx.font = `600 26px "SF Mono", "Fira Code", "Fira Mono", monospace, sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.fillText('roughpaper.online', 102, 562);
+
+    // Thin bottom accent line
+    const accent = ctx.createLinearGradient(0, 0, W, 0);
+    accent.addColorStop(0, 'rgba(255,255,255,0)');
+    accent.addColorStop(0.3, 'rgba(255,255,255,0.35)');
+    accent.addColorStop(0.7, 'rgba(255,255,255,0.35)');
+    accent.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, H - 4, W, 4);
+
+    function download() {
+      const a = document.createElement('a');
+      a.download = 'og-image.png';
+      a.href = c.toDataURL('image/png');
+      a.click();
+    }
+  </script>
+</body>
+</html>
