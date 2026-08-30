@@ -474,8 +474,7 @@ body.sidebar-collapsed #canvas-area {
   left: 160px;
   right: 0;
   bottom: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto;
   transition: left 0.25s ease;
   scrollbar-width: thin;
   scrollbar-color: rgba(67, 97, 238, 0.35) transparent;
@@ -483,6 +482,14 @@ body.sidebar-collapsed #canvas-area {
 
 #canvas-area::-webkit-scrollbar {
   height: 6px;
+  width: 6px;
+}
+
+/* Fixed paper sizes (A4 etc.) are centered instead of pinned top-left */
+#canvas-area.fixed-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #canvas-area::-webkit-scrollbar-track {
@@ -523,9 +530,10 @@ body.sidebar-collapsed #canvas-area {
 
 /* ── Divider ── */
 #divider {
-  width: 1px;
-  height: 28px;
-  background: #e0ddd8;
+  width: 2px;
+  height: 30px;
+  background: #c9c3ba;
+  border-radius: 1px;
   flex-shrink: 0;
 }
 
@@ -676,6 +684,229 @@ body.sidebar-collapsed #canvas-area {
   border-color: #4361ee;
   background: #eef0fd;
   color: #4361ee;
+}
+
+/* ── Paper Size Button ── */
+#paper-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  outline: none;
+}
+
+#paper-btn:hover {
+  background: #f0ede8;
+  color: #555;
+}
+
+#paper-btn.active {
+  border-color: #4361ee;
+  background: #eef0fd;
+  color: #4361ee;
+}
+
+/* ── Paper Size Panel ── */
+#paper-panel {
+  position: fixed;
+  display: none;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14), 0 1px 4px rgba(0, 0, 0, 0.08);
+  z-index: 300;
+  transform: translateX(-50%);
+  max-width: 260px;
+}
+
+#paper-panel.open {
+  display: flex;
+}
+
+#paper-sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.paper-size-opt {
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background: #f7f4f0;
+  cursor: pointer;
+  padding: 7px 10px;
+  outline: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.paper-size-opt:hover {
+  background: #eef0fd;
+}
+
+.paper-size-opt.active {
+  border-color: #4361ee;
+  background: #eef0fd;
+}
+
+.paper-size-label {
+  font-size: 11px;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: #999;
+  white-space: nowrap;
+}
+
+.paper-size-opt.active .paper-size-label {
+  color: #4361ee;
+}
+
+#paper-orientations {
+  display: flex;
+  gap: 6px;
+}
+
+.orientation-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background: #f7f4f0;
+  cursor: pointer;
+  padding: 8px 6px;
+  outline: none;
+  color: #999;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.orientation-opt:hover:not(:disabled) {
+  background: #eef0fd;
+}
+
+.orientation-opt.active {
+  border-color: #4361ee;
+  background: #eef0fd;
+  color: #4361ee;
+}
+
+.orientation-opt:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.orientation-label {
+  font-size: 10px;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ── Custom Paper Dimensions ── */
+#paper-dims {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.paper-dim-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.paper-dim-name {
+  width: 42px;
+  font-size: 11px;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: #999;
+}
+
+.paper-dim-value {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  font-family: system-ui, sans-serif;
+  font-weight: 600;
+  color: #555;
+}
+
+.paper-dim-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: #f7f4f0;
+  color: #555;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  transition: background 0.15s;
+}
+
+.paper-dim-btn:hover:not(:disabled) {
+  background: #eef0fd;
+  color: #4361ee;
+}
+
+.paper-dim-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* ── Print Button ── */
+#print-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  outline: none;
+}
+
+#print-btn:hover {
+  background: #f0ede8;
+  color: #555;
+}
+
+/* ── Print output (hidden on screen, shown only when printing) ── */
+#print-area {
+  display: none;
+}
+
+@media print {
+  body > *:not(#print-area) {
+    display: none !important;
+  }
+
+  #print-area {
+    display: block !important;
+  }
+
+  #print-area img {
+    display: block;
+  }
 }
 
 /* ── Clear Button ── */

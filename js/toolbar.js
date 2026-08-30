@@ -1,6 +1,7 @@
-import { setColor, setSize, setBgColor, setIsErasing, setIsPanning, currentColor, currentBgColor } from './state.js';
-import { canvas, fillBackground, clearCanvas, applyPenStyle, applyEraserStyle } from './canvas.js';
+import { setColor, setSize, setBgColor, setIsErasing, setIsPanning, setPaperSize, setOrientation, currentColor, currentBgColor, currentPaperSize, currentOrientation } from './state.js';
+import { canvas, fillBackground, clearCanvas, applyPenStyle, applyEraserStyle, applyPaperSize, nudgePaperSize, PAPER_STEP_PX } from './canvas.js';
 import { saveCurrentPageData } from './pages.js';
+import { printCurrentPage } from './print.js';
 
 function closePanels(...panels) {
   panels.forEach(p => p.classList.remove('open'));
@@ -24,7 +25,32 @@ export function registerToolbarEvents() {
   const penPanel   = document.getElementById('pen-panel');
   const eraserBtn  = document.getElementById('eraser-btn');
   const panBtn     = document.getElementById('pan-btn');
+  const paperBtn   = document.getElementById('paper-btn');
+  const paperPanel = document.getElementById('paper-panel');
+  const printBtn   = document.getElementById('print-btn');
   const toolbar    = document.getElementById('toolbar');
+
+  const widthMinus  = document.getElementById('paper-width-minus');
+  const widthPlus   = document.getElementById('paper-width-plus');
+  const widthValue  = document.getElementById('paper-width-value');
+  const heightMinus = document.getElementById('paper-height-minus');
+  const heightPlus  = document.getElementById('paper-height-plus');
+  const heightValue = document.getElementById('paper-height-value');
+
+  function syncPaperPanel() {
+    document.querySelectorAll('.paper-size-opt').forEach((o) => {
+      o.classList.toggle('active', o.dataset.size === currentPaperSize);
+    });
+    const isFixed = currentPaperSize !== 'infinite';
+    document.querySelectorAll('.orientation-opt').forEach((o) => {
+      o.disabled = !isFixed;
+      o.classList.toggle('active', o.dataset.orientation === currentOrientation);
+    });
+    [widthMinus, widthPlus, heightMinus, heightPlus].forEach((btn) => { btn.disabled = !isFixed; });
+    widthValue.textContent  = isFixed ? `${canvas.width}px` : '—';
+    heightValue.textContent = isFixed ? `${canvas.height}px` : '—';
+  }
+  syncPaperPanel();
 
   // Initialise dot and active states from current state
   colorDot.style.background = currentColor;
@@ -50,7 +76,7 @@ export function registerToolbarEvents() {
   // Colour button — toggle colour panel
   colorBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    closePanels(penPanel);
+    closePanels(penPanel, paperPanel);
     positionPanel(colorPanel);
     colorPanel.classList.toggle('open');
   });
@@ -58,11 +84,69 @@ export function registerToolbarEvents() {
   // Pen button — toggle pen size panel
   penBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    closePanels(colorPanel);
+    closePanels(colorPanel, paperPanel);
     positionPanel(penPanel);
     penPanel.classList.toggle('open');
     // Also switch to pen mode if another tool was active
     activatePen(penBtn, eraserBtn, panBtn);
+  });
+
+  // Paper button — toggle paper size panel
+  paperBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closePanels(colorPanel, penPanel);
+    positionPanel(paperPanel);
+    paperPanel.classList.toggle('open');
+  });
+
+  // Paper size options
+  document.querySelectorAll('.paper-size-opt').forEach((opt) => {
+    opt.addEventListener('click', () => {
+      setPaperSize(opt.dataset.size);
+      applyPaperSize(currentPaperSize, currentOrientation);
+      syncPaperPanel();
+      saveCurrentPageData();
+    });
+  });
+
+  // Orientation options
+  document.querySelectorAll('.orientation-opt').forEach((opt) => {
+    opt.addEventListener('click', () => {
+      if (opt.disabled) return;
+      setOrientation(opt.dataset.orientation);
+      applyPaperSize(currentPaperSize, currentOrientation);
+      syncPaperPanel();
+      saveCurrentPageData();
+    });
+  });
+
+  // Custom width/height steppers — nudge the current fixed paper size
+  widthMinus.addEventListener('click', () => {
+    nudgePaperSize('width', -PAPER_STEP_PX);
+    syncPaperPanel();
+    saveCurrentPageData();
+  });
+  widthPlus.addEventListener('click', () => {
+    nudgePaperSize('width', PAPER_STEP_PX);
+    syncPaperPanel();
+    saveCurrentPageData();
+  });
+  heightMinus.addEventListener('click', () => {
+    nudgePaperSize('height', -PAPER_STEP_PX);
+    syncPaperPanel();
+    saveCurrentPageData();
+  });
+  heightPlus.addEventListener('click', () => {
+    nudgePaperSize('height', PAPER_STEP_PX);
+    syncPaperPanel();
+    saveCurrentPageData();
+  });
+
+  // Print button — prints the current page directly
+  printBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closePanels(colorPanel, penPanel, paperPanel);
+    printCurrentPage();
   });
 
   // Pen size options
@@ -100,7 +184,7 @@ export function registerToolbarEvents() {
 
   // Eraser button
   eraserBtn.addEventListener('click', () => {
-    closePanels(colorPanel, penPanel);
+    closePanels(colorPanel, penPanel, paperPanel);
     const erasing = eraserBtn.classList.toggle('active');
     setIsErasing(erasing);
     setIsPanning(false);
@@ -117,7 +201,7 @@ export function registerToolbarEvents() {
 
   // Pan button
   panBtn.addEventListener('click', () => {
-    closePanels(colorPanel, penPanel);
+    closePanels(colorPanel, penPanel, paperPanel);
     const panning = panBtn.classList.toggle('active');
     setIsPanning(panning);
     setIsErasing(false);
@@ -172,12 +256,16 @@ export function registerToolbarEvents() {
     if (!penPanel.contains(e.target) && e.target !== penBtn) {
       penPanel.classList.remove('open');
     }
+    if (!paperPanel.contains(e.target) && e.target !== paperBtn) {
+      paperPanel.classList.remove('open');
+    }
   });
 
-  // Sync bg-chip active state when page switches
+  // Sync bg-chip and paper-size active state when page switches
   document.addEventListener('pageloaded', ({ detail: { page } }) => {
     document.querySelectorAll('.bg-chip').forEach((c) => {
       c.classList.toggle('active', c.dataset.color === page.bgColor);
     });
+    syncPaperPanel();
   });
 }

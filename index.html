@@ -97,8 +97,6 @@
         <span id="color-btn-dot"></span>
       </button>
 
-      <div id="divider"></div>
-
       <button id="pen-btn" title="Pen" aria-label="Pen" class="active">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -138,12 +136,33 @@
         </svg>
       </button>
 
+      <div id="divider"></div>
+
+      <button id="paper-btn" title="Paper size" aria-label="Paper size">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="3" width="14" height="18" rx="1.5"/>
+          <line x1="8" y1="8" x2="16" y2="8"/>
+          <line x1="8" y1="12" x2="16" y2="12"/>
+          <line x1="8" y1="16" x2="12" y2="16"/>
+        </svg>
+      </button>
+
       <button id="export-btn" title="Export as PNG" aria-label="Export as PNG">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
           <polyline points="7 10 12 15 17 10"></polyline>
           <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+      </button>
+
+      <button id="print-btn" title="Print" aria-label="Print">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9"/>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
         </svg>
       </button>
     </div>
@@ -289,6 +308,89 @@
       </div>
     </div>
   </div>
+
+  <div id="paper-panel">
+    <div class="panel-section">
+      <div class="panel-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="3" width="14" height="18" rx="1.5"/>
+        </svg>
+        <span>Paper size</span>
+      </div>
+      <div id="paper-sizes">
+        <button class="paper-size-opt" data-size="infinite" aria-label="Infinite canvas">
+          <span class="paper-size-label">Infinite</span>
+        </button>
+        <button class="paper-size-opt" data-size="a4" aria-label="A4">
+          <span class="paper-size-label">A4</span>
+        </button>
+        <button class="paper-size-opt" data-size="letter" aria-label="Letter">
+          <span class="paper-size-label">Letter</span>
+        </button>
+        <button class="paper-size-opt" data-size="legal" aria-label="Legal">
+          <span class="paper-size-label">Legal</span>
+        </button>
+        <button class="paper-size-opt active" data-size="a3" aria-label="A3">
+          <span class="paper-size-label">A3</span>
+        </button>
+        <button class="paper-size-opt" data-size="a5" aria-label="A5">
+          <span class="paper-size-label">A5</span>
+        </button>
+      </div>
+    </div>
+    <div class="panel-sep"></div>
+    <div class="panel-section">
+      <div class="panel-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="4" width="12" height="16" rx="1.5"/>
+        </svg>
+        <span>Orientation</span>
+      </div>
+      <div id="paper-orientations">
+        <button class="orientation-opt active" data-orientation="portrait" aria-label="Portrait">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="18" viewBox="0 0 14 18" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="1" y="1" width="12" height="16" rx="1.5"/>
+          </svg>
+          <span class="orientation-label">Portrait</span>
+        </button>
+        <button class="orientation-opt" data-orientation="landscape" aria-label="Landscape">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="14" viewBox="0 0 18 14" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="1" y="1" width="16" height="12" rx="1.5"/>
+          </svg>
+          <span class="orientation-label">Landscape</span>
+        </button>
+      </div>
+    </div>
+    <div class="panel-sep"></div>
+    <div class="panel-section">
+      <div class="panel-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"/>
+          <path d="M12 5v14"/>
+        </svg>
+        <span>Custom size</span>
+      </div>
+      <div id="paper-dims">
+        <div class="paper-dim-row">
+          <span class="paper-dim-name">Width</span>
+          <button class="paper-dim-btn" id="paper-width-minus" aria-label="Decrease width">&minus;</button>
+          <span class="paper-dim-value" id="paper-width-value">&mdash;</span>
+          <button class="paper-dim-btn" id="paper-width-plus" aria-label="Increase width">+</button>
+        </div>
+        <div class="paper-dim-row">
+          <span class="paper-dim-name">Height</span>
+          <button class="paper-dim-btn" id="paper-height-minus" aria-label="Decrease height">&minus;</button>
+          <span class="paper-dim-value" id="paper-height-value">&mdash;</span>
+          <button class="paper-dim-btn" id="paper-height-plus" aria-label="Increase height">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="print-area"></div>
 
   <div id="canvas-area">
     <canvas id="canvas"></canvas>
