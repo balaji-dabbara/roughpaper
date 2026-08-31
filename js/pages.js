@@ -1,5 +1,5 @@
-import { ctx, canvas, fillBackground, applyPenStyle, applyEraserStyle } from './canvas.js';
-import { setBgColor, currentBgColor, isErasing } from './state.js';
+import { ctx, canvas, fillBackground, applyPenStyle, applyEraserStyle, applyPaperSize, setCanvasDimensions } from './canvas.js';
+import { setBgColor, currentBgColor, setPaperSize, currentPaperSize, setOrientation, currentOrientation, isErasing } from './state.js';
 
 export const MAX_PAGES = 10;
 
@@ -10,7 +10,10 @@ let pages        = [];
 let activePageId = null;
 
 function newPage(id, index) {
-  return { id, label: `Page ${index}`, bgColor: '#1a1a1a', canvasData: null };
+  return {
+    id, label: `Page ${index}`, bgColor: '#1a1a1a', canvasData: null,
+    paperSize: 'a3', orientation: 'portrait', paperWidth: null, paperHeight: null,
+  };
 }
 
 export function initPages() {
@@ -21,7 +24,7 @@ export function initPages() {
     // Migrate from old single-canvas storage
     const oldBg   = localStorage.getItem('roughpaper-bgcolor') || '#1a1a1a';
     const oldData = localStorage.getItem('roughpaper-canvas')  || null;
-    pages = [{ id: 1, label: 'Page 1', bgColor: oldBg, canvasData: oldData }];
+    pages = [{ id: 1, label: 'Page 1', bgColor: oldBg, canvasData: oldData, paperSize: 'a3', orientation: 'portrait', paperWidth: null, paperHeight: null }];
   }
 
   const savedId = localStorage.getItem(ACTIVE_KEY);
@@ -53,6 +56,12 @@ export function saveCurrentPageData() {
   const page = pages.find(p => p.id === activePageId);
   if (!page) return;
   page.bgColor = currentBgColor;
+  page.paperSize = currentPaperSize;
+  page.orientation = currentOrientation;
+  // Always record the actual bitmap size (even in infinite mode) so printing
+  // can composite it 1:1 without stretching/distorting the image.
+  page.paperWidth  = canvas.width;
+  page.paperHeight = canvas.height;
   try { page.canvasData = canvas.toDataURL(); } catch { /* fail silently */ }
   persistPages();
 }
@@ -60,6 +69,14 @@ export function saveCurrentPageData() {
 function applyPageToCanvas(page) {
   setBgColor(page.bgColor);
   fillBackground(page.bgColor);   // explicit — avoids any stale-binding edge case
+  const paperSize = page.paperSize ?? 'infinite';
+  setPaperSize(paperSize);
+  setOrientation(page.orientation ?? 'portrait');
+  if (paperSize !== 'infinite' && page.paperWidth && page.paperHeight) {
+    setCanvasDimensions(page.paperWidth, page.paperHeight);
+  } else {
+    applyPaperSize(paperSize, page.orientation ?? 'portrait');
+  }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (page.canvasData) {
     const img   = new Image();
