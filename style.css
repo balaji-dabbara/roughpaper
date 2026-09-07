@@ -113,19 +113,16 @@ html, body {
 }
 
 #github-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 20px;
+  justify-content: center;
   background: rgba(255, 255, 255, 0.15);
   color: rgba(255, 255, 255, 0.92);
   text-decoration: none;
-  font-size: 12px;
-  font-family: system-ui, sans-serif;
-  font-weight: 600;
   transition: background 0.15s;
-  white-space: nowrap;
 }
 
 #github-btn:hover {
@@ -1015,10 +1012,6 @@ body.sidebar-collapsed #canvas-area {
     position: static;
     transform: none;
     flex-shrink: 0;
-  }
-
-  #github-label {
-    display: none;
   }
 
   #toolbar {
