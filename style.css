@@ -241,6 +241,18 @@ html, body {
   margin: 0;
 }
 
+#about-privacy {
+  display: inline-block;
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 4px;
+  text-decoration: underline;
+}
+
+#about-privacy:hover {
+  color: #4361ee;
+}
+
 /* ── Page Sidebar ── */
 #page-sidebar {
   position: fixed;
