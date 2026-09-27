@@ -16,6 +16,7 @@ exclude:
   - CODE_OF_CONDUCT.md
   - LICENSE
   - generate-og.html
+  - generate-feature-graphic.html
   - SEO-SUBMISSION.md
   - memory/
   - "*.sh"
