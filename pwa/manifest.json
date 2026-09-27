@@ -1,12 +1,15 @@
 {
+  "id": "/",
   "name": "Rough Paper",
   "short_name": "RoughPaper",
   "description": "A free, minimal freehand drawing canvas in your browser. Sketch and doodle with no sign-up, offline support, and PNG export.",
   "lang": "en",
+  "dir": "ltr",
   "categories": ["productivity", "utilities", "education"],
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "icons": [
