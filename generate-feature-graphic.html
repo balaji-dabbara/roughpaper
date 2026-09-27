@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generate Feature Graphic — Rough Paper</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 1.25rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    canvas { border-radius: 10px; max-width: 90vw; box-shadow: 0 8px 40px rgba(0,0,0,0.6); }
+    button {
+      padding: 0.75rem 2rem;
+      background: linear-gradient(135deg, #4361ee, #7209b7);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+    }
+    button:hover { opacity: 0.9; }
+    p { color: #888; font-size: 0.85rem; margin: 0; }
+    code { color: #aaa; background: #222; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <canvas id="c" width="1024" height="500"></canvas>
+  <button onclick="download()">Download feature-graphic.png</button>
+  <p>Play Console &rarr; Main store listing &rarr; Feature graphic. Exactly 1024&times;500.</p>
+
+  <script>
+    const c = document.getElementById('c');
+    const ctx = c.getContext('2d');
+    const W = 1024, H = 500;
+
+    // Background gradient
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#3451d1');
+    bg.addColorStop(0.5, '#4361ee');
+    bg.addColorStop(1, '#7209b7');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle noise texture overlay
+    ctx.globalAlpha = 0.04;
+    for (let x = 0; x < W; x += 4) {
+      for (let y = 0; y < H; y += 4) {
+        if (Math.random() > 0.5) {
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(x, y, 1, 1);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // Decorative circles
+    ctx.globalAlpha = 0.07;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(940, 0, 260, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(60, H, 200, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Decorative freehand strokes (right side)
+    function squiggle(points, alpha, width) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(points[0][0], points[0][1]);
+      for (let i = 1; i < points.length - 1; i++) {
+        const mx = (points[i][0] + points[i+1][0]) / 2;
+        const my = (points[i][1] + points[i+1][1]) / 2;
+        ctx.quadraticCurveTo(points[i][0], points[i][1], mx, my);
+      }
+      ctx.lineTo(points[points.length-1][0], points[points.length-1][1]);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    squiggle([[700,60],[740,100],[710,140],[755,180],[725,220]], 0.18, 8);
+    squiggle([[800,30],[840,75],[810,120],[850,160],[820,205]], 0.13, 6);
+    squiggle([[900,90],[925,135],[895,180],[930,220]], 0.10, 4);
+
+    // Pencil icon
+    function drawPencilIcon(x, y, size, alpha) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(x, y);
+      ctx.fillStyle = '#fff';
+      const s = size;
+      ctx.beginPath();
+      ctx.moveTo(0.15*s, 0);
+      ctx.lineTo(s, 0.85*s);
+      ctx.lineTo(0.85*s, s);
+      ctx.lineTo(0, 0.15*s);
+      ctx.closePath();
+      ctx.globalAlpha = alpha * 0.9;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(s, 0.85*s);
+      ctx.lineTo(0.85*s, s);
+      ctx.lineTo(s*1.02, s*1.02);
+      ctx.closePath();
+      ctx.globalAlpha = alpha * 0.6;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    drawPencilIcon(76, 82, 52, 0.85);
+
+    // App name
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `bold 74px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif`;
+    ctx.fillText('Rough Paper', 78, 230);
+
+    // Tagline
+    ctx.font = `400 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.fillText('Free freehand drawing canvas — no sign-up needed', 80, 278);
+
+    // Feature pills
+    const features = ['Multi-page', 'Offline', 'Export PNG'];
+    let px = 80;
+    const py = 320;
+    ctx.font = `500 20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+    for (const f of features) {
+      const tw = ctx.measureText(f).width;
+      const pw = tw + 32, ph = 38, pr = 19;
+      ctx.fillStyle = 'rgba(255,255,255,0.14)';
+      ctx.beginPath();
+      ctx.moveTo(px + pr, py);
+      ctx.lineTo(px + pw - pr, py);
+      ctx.arc(px + pw - pr, py + pr, pr, -Math.PI/2, Math.PI/2);
+      ctx.lineTo(px + pr, py + ph);
+      ctx.arc(px + pr, py + pr, pr, Math.PI/2, -Math.PI/2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.fillText(f, px + 16, py + 26);
+      px += pw + 12;
+    }
+
+    // URL
+    ctx.font = `600 22px "SF Mono", "Fira Code", "Fira Mono", monospace, sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.fillText('roughpaper.online', 80, 430);
+
+    // Bottom accent line
+    const accent = ctx.createLinearGradient(0, 0, W, 0);
+    accent.addColorStop(0, 'rgba(255,255,255,0)');
+    accent.addColorStop(0.3, 'rgba(255,255,255,0.35)');
+    accent.addColorStop(0.7, 'rgba(255,255,255,0.35)');
+    accent.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = accent;
+    ctx.fillRect(0, H - 3, W, 3);
+
+    function download() {
+      const a = document.createElement('a');
+      a.download = 'feature-graphic.png';
+      a.href = c.toDataURL('image/png');
+      a.click();
+    }
+  </script>
+</body>
+</html>
