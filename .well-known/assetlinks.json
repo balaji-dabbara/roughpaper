@@ -3,6 +3,6 @@
       "target": {
         "namespace": "android_app",
         "package_name": "online.roughpaper.www.twa",
-        "sha256_cert_fingerprints": ["52:41:1C:55:B0:47:65:EE:BA:52:08:09:FA:D3:8A:F5:08:D8:B2:27:04:FE:11:25:44:AC:DC:D2:5F:90:C4:B5"]
+        "sha256_cert_fingerprints": ["D2:AD:99:8A:6D:57:47:51:C7:BC:4A:05:E2:8F:7D:C3:DF:41:BA:9A:9C:9F:CC:EE:9E:3E:8B:B9:E6:AC:E3:21"]
       }
     }]
