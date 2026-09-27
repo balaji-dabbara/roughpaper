@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "online.roughpaper.www.twa",
+        "sha256_cert_fingerprints": ["52:41:1C:55:B0:47:65:EE:BA:52:08:09:FA:D3:8A:F5:08:D8:B2:27:04:FE:11:25:44:AC:DC:D2:5F:90:C4:B5"]
+      }
+    }]

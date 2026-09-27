@@ -7,6 +7,9 @@ url: "https://www.roughpaper.online"
 baseurl: ""
 lang: en
 
+include:
+  - ".well-known"
+
 exclude:
   - README.md
   - CONTRIBUTING.md
