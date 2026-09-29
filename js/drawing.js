@@ -7,6 +7,7 @@ import {
 } from './state.js';
 import { applyPenStyle, applyEraserStyle } from './canvas.js';
 import { saveCurrentPageData } from './pages.js';
+import { pushHistory, isRestoring } from './history.js';
 
 function getPos(e) {
   const rect = canvas.getBoundingClientRect();
@@ -28,6 +29,8 @@ function getRawPos(e) {
 }
 
 function startDraw(e) {
+  // A stroke started mid-restore would be painted over when the restore lands
+  if (isRestoring()) return;
   setIsDrawing(true);
   if (isPanning) {
     const { x, y } = getRawPos(e);
@@ -35,6 +38,8 @@ function startDraw(e) {
     canvas.style.cursor = 'grabbing';
     return;
   }
+  // After the pan early-return, so pan gestures don't use up undo steps
+  pushHistory();
   const { x, y } = getPos(e);
   setLastPos(x, y);
   if (isErasing) {

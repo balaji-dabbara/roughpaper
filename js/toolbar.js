@@ -1,7 +1,8 @@
-import { setColor, setSize, setBgColor, setIsErasing, setIsPanning, setPaperSize, setOrientation, currentColor, currentBgColor, currentPaperSize, currentOrientation } from './state.js';
+import { setColor, setSize, setBgColor, setIsErasing, setIsPanning, setPaperSize, setOrientation, currentColor, currentBgColor, currentPaperSize, currentOrientation, isDrawing } from './state.js';
 import { canvas, fillBackground, clearCanvas, applyPenStyle, applyEraserStyle, applyPaperSize, nudgePaperSize, PAPER_STEP_PX } from './canvas.js';
 import { saveCurrentPageData } from './pages.js';
 import { printCurrentPage } from './print.js';
+import { pushHistory, clearHistory, undo, redo, canUndo, canRedo } from './history.js';
 
 function closePanels(...panels) {
   panels.forEach(p => p.classList.remove('open'));
@@ -28,6 +29,8 @@ export function registerToolbarEvents() {
   const paperBtn   = document.getElementById('paper-btn');
   const paperPanel = document.getElementById('paper-panel');
   const printBtn   = document.getElementById('print-btn');
+  const undoBtn    = document.getElementById('undo-btn');
+  const redoBtn    = document.getElementById('redo-btn');
   const toolbar    = document.getElementById('toolbar');
 
   const widthMinus  = document.getElementById('paper-width-minus');
@@ -51,6 +54,13 @@ export function registerToolbarEvents() {
     heightValue.textContent = isFixed ? `${canvas.height}px` : '—';
   }
   syncPaperPanel();
+
+  // Resizing the canvas invalidates undo snapshots taken at the old size
+  function onPaperChanged() {
+    syncPaperPanel();
+    saveCurrentPageData();
+    clearHistory();
+  }
 
   // Initialise dot and active states from current state
   colorDot.style.background = currentColor;
@@ -104,8 +114,7 @@ export function registerToolbarEvents() {
     opt.addEventListener('click', () => {
       setPaperSize(opt.dataset.size);
       applyPaperSize(currentPaperSize, currentOrientation);
-      syncPaperPanel();
-      saveCurrentPageData();
+      onPaperChanged();
     });
   });
 
@@ -115,31 +124,26 @@ export function registerToolbarEvents() {
       if (opt.disabled) return;
       setOrientation(opt.dataset.orientation);
       applyPaperSize(currentPaperSize, currentOrientation);
-      syncPaperPanel();
-      saveCurrentPageData();
+      onPaperChanged();
     });
   });
 
   // Custom width/height steppers — nudge the current fixed paper size
   widthMinus.addEventListener('click', () => {
     nudgePaperSize('width', -PAPER_STEP_PX);
-    syncPaperPanel();
-    saveCurrentPageData();
+    onPaperChanged();
   });
   widthPlus.addEventListener('click', () => {
     nudgePaperSize('width', PAPER_STEP_PX);
-    syncPaperPanel();
-    saveCurrentPageData();
+    onPaperChanged();
   });
   heightMinus.addEventListener('click', () => {
     nudgePaperSize('height', -PAPER_STEP_PX);
-    syncPaperPanel();
-    saveCurrentPageData();
+    onPaperChanged();
   });
   heightPlus.addEventListener('click', () => {
     nudgePaperSize('height', PAPER_STEP_PX);
-    syncPaperPanel();
-    saveCurrentPageData();
+    onPaperChanged();
   });
 
   // Print button — prints the current page directly
@@ -217,9 +221,37 @@ export function registerToolbarEvents() {
 
   // Clear button
   document.getElementById('clear-btn').addEventListener('click', () => {
+    pushHistory();
     clearCanvas();
     applyPenStyle();
     saveCurrentPageData();
+  });
+
+  // Undo / redo
+  undoBtn.addEventListener('click', () => undo(saveCurrentPageData));
+  redoBtn.addEventListener('click', () => redo(saveCurrentPageData));
+
+  function syncHistoryButtons() {
+    undoBtn.disabled = !canUndo();
+    redoBtn.disabled = !canRedo();
+  }
+  syncHistoryButtons();
+  document.addEventListener('historychange', syncHistoryButtons);
+
+  // Ctrl/Cmd+Z undo, Ctrl/Cmd+Shift+Z or Ctrl+Y redo. Skipped while a text
+  // field (e.g. the page-rename input) has focus so its native undo still works.
+  document.addEventListener('keydown', (e) => {
+    if (!(e.ctrlKey || e.metaKey) || e.altKey || isDrawing) return;
+    const el = document.activeElement;
+    if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable)) return;
+    const key = e.key.toLowerCase();
+    if (key === 'z' && !e.shiftKey) {
+      e.preventDefault();
+      undo(saveCurrentPageData);
+    } else if ((key === 'z' && e.shiftKey) || key === 'y') {
+      e.preventDefault();
+      redo(saveCurrentPageData);
+    }
   });
 
   // Export button — composite CSS bg + canvas strokes into a single image
