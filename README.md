@@ -13,6 +13,7 @@ A minimal, browser-based freehand drawing canvas — like a digital rough paper 
 - 🖊️ Freehand drawing (mouse + touch)
 - 🎨 10 pen colours and 3 brush sizes
 - 🧹 Eraser, clear, export-as-PNG
+- ↩️ Undo / redo (Ctrl+Z, Ctrl+Shift+Z) — including undoing a clear
 - 📄 Multi-page support with auto-save to localStorage
 - 📱 Mobile-first responsive UI
 - ✅ Installable PWA with offline support (service worker + manifest)

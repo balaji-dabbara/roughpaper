@@ -668,6 +668,35 @@ body.sidebar-collapsed #canvas-area {
   color: #4361ee;
 }
 
+/* ── Undo / Redo Buttons ── */
+#undo-btn,
+#redo-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  outline: none;
+}
+
+#undo-btn:hover:not(:disabled),
+#redo-btn:hover:not(:disabled) {
+  background: #f0ede8;
+  color: #555;
+}
+
+#undo-btn:disabled,
+#redo-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
 /* ── Eraser Button ── */
 #eraser-btn {
   width: 34px;
@@ -1030,6 +1059,9 @@ body.sidebar-collapsed #canvas-area {
     width: 100%;
     justify-content: center;
     order: 3;
+    /* Tighter spacing so the undo/redo buttons don't shrink tap targets */
+    gap: 4px;
+    padding: 8px 10px;
   }
 
   #sidebar-toggle {

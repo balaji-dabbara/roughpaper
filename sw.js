@@ -1,4 +1,4 @@
-const CACHE_NAME = 'roughpaper-v6';
+const CACHE_NAME = 'roughpaper-v7';
 const ASSETS = [
   '/',
   '/index.html',
@@ -9,6 +9,7 @@ const ASSETS = [
   '/js/main.js',
   '/js/canvas.js',
   '/js/drawing.js',
+  '/js/history.js',
   '/js/pages.js',
   '/js/print.js',
   '/js/state.js',
