@@ -1,4 +1,5 @@
 import { ctx, canvas, fillBackground, applyPenStyle, applyEraserStyle, applyPaperSize, setCanvasDimensions } from './canvas.js';
+import { clearHistory } from './history.js';
 import { setBgColor, currentBgColor, setPaperSize, currentPaperSize, setOrientation, currentOrientation, isErasing } from './state.js';
 
 export const MAX_PAGES = 10;
@@ -67,6 +68,8 @@ export function saveCurrentPageData() {
 }
 
 function applyPageToCanvas(page) {
+  // Undo snapshots belong to the previous page's bitmap
+  clearHistory();
   setBgColor(page.bgColor);
   fillBackground(page.bgColor);   // explicit — avoids any stale-binding edge case
   const paperSize = page.paperSize ?? 'infinite';
